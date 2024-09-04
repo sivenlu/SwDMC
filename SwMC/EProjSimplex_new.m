@@ -1,4 +1,4 @@
-function [x ft] = EProjSimplex_new(v, k)
+function x = EProjSimplex_new(v, k)
 
 %
 %% Problem
@@ -9,32 +9,33 @@ function [x ft] = EProjSimplex_new(v, k)
 
 if nargin < 2
     k = 1;
-end;
+end
 
-ft=1;
+ft = 1;
 n = length(v);
-
-v0 = v-mean(v) + k/n;
+eps = 1e-10;
+% Largrange solution
+v0 = v-mean(v) + k / n;
 %vmax = max(v0);
 vmin = min(v0);
 if vmin < 0
     f = 1;
     lambda_m = 0;
-    while abs(f) > 10^-10
+    while abs(f) > eps
         v1 = v0 - lambda_m;
-        posidx = v1>0;
+        posidx = v1 > 0;
         npos = sum(posidx);
         g = -npos;
         f = sum(v1(posidx)) - k;
-        lambda_m = lambda_m - f/g;
-        ft=ft+1;
+        lambda_m = lambda_m - f / g;
+        ft = ft + 1;
         if ft > 100
-            x = max(v1,0);
+            x = max(v1, 0);
             break;
-        end;
-    end;
-    x = max(v1,0);
+        end
+    end
+    x = max(v1, 0);
 
 else
     x = v0;
-end;
+end

@@ -13,30 +13,32 @@ function ClusteringResult = SwMC(X,y0,c)
 alpha = rand(1,viewnum);
 alpha = alpha/sum(alpha,2);
 NITER = 50; 
+eps = 1e-8;
 lambda = 1; 
-%% 
-for iter = 1:NITER 
+Obj = zeros(50, 1);
+%%
+for iter = 1 : NITER 
     % Fix alpha, update S. 
     if iter == 1
-       [y, S] = CLR(alpha,X,c,lambda); 
+       [y, S] = CLR(alpha, X, c, lambda); 
     else
-       [y, S] = CLR(alpha,X,c,lambda,S0); 
+       [y, S] = CLR(alpha, X, c, lambda, S0); 
     end
     % Fix S, update alpha 
-    for v = 1:viewnum
-        alpha(1,v) = 0.5/norm(S-X{v},'fro');
+    for v = 1 : viewnum
+        alpha(1, v) = 0.5 / norm(S - X{v}, 'fro');
     end
     S0 = S;
       
     % Calculate obj
     obj = 0;
-    for v = 1:viewnum
-        obj = obj+norm(S-X{v},'fro');
+    for v = 1 : viewnum
+        obj = obj + norm(S - X{v}, 'fro');
     end
     Obj(iter) = obj;
-    if (iter>1 && abs(Obj(iter-1)-Obj(iter)) < 10^-8)
+    if iter > 1 && abs(Obj(iter-1) - Obj(iter)) < eps
         break;
     end   
 end
-ClusteringResult = ClusteringMeasure(y0,y); %ACC NMI Purity
-Tag = isequal(Obj,sort(Obj,'descend'));
+ClusteringResult = ClusteringMeasure(y0, y); %ACC NMI PUR
+Tag = isequal(Obj, sort(Obj, 'descend'));

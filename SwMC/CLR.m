@@ -1,4 +1,5 @@
 function [y, S] = CLR(alpha, X, c,lambda,S0)
+% process of Largrange solution
 % INPUT:
 % alpha: A vector containing the weights for each view.
 % S0: Similarity matrix to be improved.
@@ -6,7 +7,8 @@ function [y, S] = CLR(alpha, X, c,lambda,S0)
 % OUTPUT:
 % y: Predicted labels.
 % S: The refined similarity matrix.
-
+% Ref: 
+%   Equation (16) of Self-weighted Multiview Clustering with Multiple Graphs  
 viewnum = size(alpha, 2);
 datanum = size(X{1}, 1);
 if nargin < 5

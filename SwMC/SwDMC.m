@@ -1,10 +1,11 @@
-function ClusteringResult = SwMC(X,y0,c)
+function [ClusteringResult, S, clusternum] = SwDMC(X,y0,c)
 % INPUT:
 % X: constructed affinity matrices, X is a cell and X{i} is n by n
 % y0: cluster labels
 % c: cluster number
 % OUTPUT:
 % ClusteringResult: ACC, NMI, Purity
+% S: doubly stochastic similariy matrix.
 % Ref:
 % Feiping Nie, Jing Li, Xuelong Li.
 % Self-weighted Multiview Clustering with Multiple Graphs.
@@ -20,9 +21,9 @@ Obj = zeros(50, 1);
 for iter = 1 : NITER 
     % Fix alpha, update S. 
     if iter == 1
-       [y, S] = CLR(alpha, X, c, lambda); 
+       [~, S] = CLR(alpha, X, c, lambda); 
     else
-       [y, S] = CLR(alpha, X, c, lambda, S0); 
+       [~, S] = CLR(alpha, X, c, lambda, S0); 
     end
     % Fix S, update alpha 
     for v = 1 : viewnum
@@ -40,5 +41,11 @@ for iter = 1 : NITER
         break;
     end   
 end
+S = (S + S') / 2;
+S = Marcus_Mapping(S);
+[clusternum, y]=graphconncomp(sparse(S)); y = y';
+% if clusternum ~= c
+%     sprintf('Can not find the correct cluster number: %d', c)
+% end
 ClusteringResult = ClusteringMeasure(y0, y); %ACC NMI PUR
 Tag = isequal(Obj, sort(Obj, 'descend'));

@@ -1,1 +1,6 @@
 SwMC/datasets/*
+
+SwMC/clustering_method/ANCMM
+SwMC/clustering_method/lib
+
+SwMC/test.m

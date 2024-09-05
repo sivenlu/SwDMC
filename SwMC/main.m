@@ -7,7 +7,7 @@ Dataset_name = {
     'WebKB'; % 5
     };
 
-for i = 5
+for i = 3
     dataset_name = [Dataset_name{i} '.mat'];
     data = load(dataset_name);
 
@@ -36,7 +36,23 @@ for i = 5
             result_ANCMM2 = ClusteringMeasure(y, predicted_label2);
             result_ANCMM = (result_ANCMM1 + result_ANCMM2) / 2;
         case 3
+            y = data.Y;
+            c = length(unique(y));
+            k = 12; % 10 12 40
+            r = 10; % 10
+            X1 = normalize(data.X, 'norm');
+            dataset_name = [Dataset_name{i + 1} '.mat'];
+            data = load(dataset_name);
+            X2 = normalize(data.X, 'norm');
+            [predicted_label1, A1] = ANCMM(X1', c, k, r);
+            [predicted_label2, A2] = ANCMM(X2', c, k, r);
+            X = {A1, A2};
+            result1 = ClusteringMeasure(y, predicted_label1);
+            result2 = ClusteringMeasure(y, predicted_label2);
+            result = (result1 + result2) / 2; 
+            
         case 4
+            continue;
         case 5
             y = data.gnd;
             c= length(unique(y));
@@ -44,11 +60,11 @@ for i = 5
             r = 200;
             X1 = normalize(data.X{1}, "range");
             X2 = normalize(data.X{2}, "range");
-%             [predicted_label1, A1] = ANCMM(X1', c, k, r);
-%             [predicted_label2, A2] = ANCMM(X2', c, k, r);
+            [predicted_label1, A1] = ANCMM(X1', c, k, r);
+            [predicted_label2, A2] = ANCMM(X2', c, k, r);
 
-            [predicted_label1, A1] = CAN(X1', c, k, r);
-            [predicted_label2, A2] = CAN(X2', c, k, r);
+%             [predicted_label1, A1] = CAN(X1', c, k, r);
+%             [predicted_label2, A2] = CAN(X2', c, k, r);
 
             X = {A1, A2};
             result1 = ClusteringMeasure(y, predicted_label1);
@@ -56,10 +72,9 @@ for i = 5
             result = (result1 + result2) / 2;
     end
     [result_SwDMC, S, clusternum] = SwDMC(X, y, c);
-%     if clusternum == c
-%         disp(k);
-%         disp(r);
-%     end
+    if clusternum ~= c
+        sprintf('Can not find the correct cluster number: %d', c)
+    end
     display(result);
     display(result_SwDMC);
 %     disp(sum(S));

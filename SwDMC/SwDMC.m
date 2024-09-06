@@ -1,6 +1,7 @@
 function [ClusteringResult, S, clusternum] = SwDMC(X,y0,c)
 % INPUT:
 % X: constructed affinity matrices, X is a cell and X{i} is n by n
+%    X should be cell(1, viewnum) size.
 % y0: cluster labels
 % c: cluster number
 % OUTPUT:

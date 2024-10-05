@@ -1,9 +1,10 @@
-function [ClusteringResult, S, clusternum] = SwDMC(X,y0,c)
+function [ClusteringResult, S, clusternum] = SwDMC(X,y0,c,lambda)
 % INPUT:
 % X: constructed affinity matrices, X is a cell and X{i} is n by n
 %    X should be cell(1, viewnum) size.
 % y0: cluster labels
 % c: cluster number
+% lambda: parameter related to rank constraint
 % OUTPUT:
 % ClusteringResult: ACC, NMI, Purity
 % S: doubly stochastic similariy matrix.
@@ -16,7 +17,6 @@ alpha = rand(1,viewnum);
 alpha = alpha/sum(alpha,2);
 NITER = 50; 
 eps = 1e-8;
-lambda = 1; 
 Obj = zeros(50, 1);
 %%
 for iter = 1 : NITER 
